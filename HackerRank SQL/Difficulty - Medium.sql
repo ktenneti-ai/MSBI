@@ -20,6 +20,49 @@ select Doctor, Professor, Singer,Actor from
   )as rc pivot
    (max(Name) for Occupation in(Doctor, Professor, Singer,Actor)) pivt
 
+-- Without the use of Pivot Function
+/*
+Enter your query here.
+Please append a semicolon ";" at the end of the query and enter your query in a single line to avoid error.
+*/
+with Doctor as (
+SELECT 
+         ROW_NUMBER() OVER (PARTITION BY Occupation ORDER BY Name) rn,
+         [Name],
+         [Occupation] 
+     FROM 
+         Occupations
+    where [Occupation] = 'Doctor'
+),  Professor as (
+SELECT 
+         ROW_NUMBER() OVER (PARTITION BY Occupation ORDER BY Name) rn,
+         [Name],
+         [Occupation] 
+     FROM 
+         Occupations
+    where [Occupation] = 'Professor'
+), Singer as (
+SELECT 
+         ROW_NUMBER() OVER (PARTITION BY Occupation ORDER BY Name) rn,
+         [Name],
+         [Occupation] 
+     FROM 
+         Occupations
+    where [Occupation] = 'Singer'
+), Actor as (
+SELECT 
+         ROW_NUMBER() OVER (PARTITION BY Occupation ORDER BY Name) rn,
+         [Name],
+         [Occupation] 
+     FROM 
+         Occupations
+    where [Occupation] = 'Actor'
+)
+select D.[Name], p.[Name], s.[Name], a.[Name] from Doctor D 
+full outer join Professor p on D.rn = P.rn
+full outer join Singer s on D.rn = s.rn or p.rn=s.rn
+full outer join Actor a on D.rn = a.rn or p.rn = a.rn or s.rn = a.rn 
+
 /*Binary Tree Nodes*/
 select case 
     when P is null then CONVERT(varchar(10), N)+' Root'
